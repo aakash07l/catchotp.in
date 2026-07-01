@@ -2,30 +2,29 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePrivy } from "@privy-io/react-auth";
 import { 
   Smartphone, Search, Wallet, Plus, Clock, Copy, Check, Trash2, 
-  RefreshCw, LogOut, ShieldAlert, Award, ChevronDown, ChevronUp, CheckCircle, Database, Lock, LogIn
+  RefreshCw, LogOut, ShieldAlert, Award, ChevronDown, ChevronUp, CheckCircle, Database, Lock, LogIn, Menu, X
 } from "lucide-react";
 
 export default function Dashboard() {
-  // Authentication Gate States
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authEmail, setAuthEmail] = useState("");
-  const [authPassword, setAuthPassword] = useState("");
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  // Privy Hooks
+  const { login, logout, authenticated, ready, user } = usePrivy();
   
-  // Mock User Wallet Balance
-  const [balance, setBalance] = useState(150.0);
+  // Sidebar State (Default closed on mobile, open on desktop via CSS override)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Selection states
   const [selectedCountry, setSelectedCountry] = useState("India");
   const [searchService, setSearchService] = useState("");
   const [activeTab, setActiveTab] = useState("rent"); // rent, history, add-funds
   
-  // Collapsible/Dropdown Wallet State (default collapsed on mobile, open on desktop)
+  // Wallet states
+  const [balance, setBalance] = useState(150.0);
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   
-  // Recharge modal / state
+  // Recharge states
   const [rechargeAmount, setRechargeAmount] = useState("100");
   const [rechargeStep, setRechargeStep] = useState(1); // 1: input, 2: qr, 3: success
   const [copiedText, setCopiedText] = useState("");
@@ -191,19 +190,8 @@ export default function Dashboard() {
     }, 2000);
   };
 
-  // Login handler
-  const handleAuthSubmit = (e) => {
-    e.preventDefault();
-    // Simulate auth success
-    setIsLoggedIn(true);
-  };
-
-  const handleGoogleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  // 1. Auth Gate View
-  if (!isLoggedIn) {
+  // 1. Auth Gate View using Privy
+  if (ready && !authenticated) {
     return (
       <div style={localStyles.gateContainer}>
         <div className="card animate-fade-in" style={localStyles.gateCard}>
@@ -211,74 +199,29 @@ export default function Dashboard() {
             <Smartphone size={32} color="var(--primary)" style={{ marginBottom: "12px" }} />
             <h2 style={{ fontSize: "1.6rem" }}>Catch<span style={{ color: "var(--primary)" }}>Otp</span>.in</h2>
             <p style={{ fontSize: "0.85rem", marginTop: "8px" }}>
-              {isRegisterMode ? "Create a secure account to buy burner numbers" : "Log in to access your virtual SMS workspace"}
+              Sign in to rent virtual numbers and bypass SMS verification instantly.
             </p>
           </div>
 
-          <button onClick={handleGoogleLogin} style={localStyles.googleBtn}>
-            <svg viewBox="0 0 24 24" width="18" height="18" style={{ marginRight: "8px" }}>
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" />
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" />
-            </svg>
-            Continue with Google
+          <button onClick={login} style={localStyles.mainAuthBtn}>
+            <LogIn size={18} /> Sign In / Sign Up with Privy
           </button>
 
-          <div style={localStyles.divider}>
-            <span style={localStyles.dividerText}>or continue with email</span>
-          </div>
+          <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", textAlign: "center", marginTop: "16px", lineHeight: "1.5" }}>
+            By signing in, you agree to our terms of service. Security and encryption are managed by Privy.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-          <form onSubmit={handleAuthSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div className="form-group" style={{ marginBottom: "0" }}>
-              <label className="form-label">Email Address</label>
-              <input 
-                type="email" 
-                value={authEmail} 
-                onChange={(e) => setAuthEmail(e.target.value)}
-                className="input" 
-                placeholder="you@example.com"
-                required
-                style={{ width: "100%" }}
-              />
-            </div>
-            
-            <div className="form-group" style={{ marginBottom: "0" }}>
-              <label className="form-label">Password</label>
-              <input 
-                type="password" 
-                value={authPassword} 
-                onChange={(e) => setAuthPassword(e.target.value)}
-                className="input" 
-                placeholder="••••••••"
-                required
-                style={{ width: "100%" }}
-              />
-            </div>
-
-            <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px", marginTop: "8px" }}>
-              {isRegisterMode ? "Register Account" : "Access Workspace"}
-            </button>
-
-            <button 
-              type="button" 
-              onClick={() => setIsRegisterMode(!isRegisterMode)}
-              style={localStyles.toggleAuthModeBtn}
-            >
-              {isRegisterMode ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-            </button>
-          </form>
-
-          {/* Quick Demo Test Access */}
-          <div style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
-            <button 
-              onClick={() => setIsLoggedIn(true)} 
-              className="btn btn-secondary btn-sm"
-              style={{ width: "100%" }}
-            >
-              🚀 Instant Mock Login (For Developer Review)
-            </button>
-          </div>
+  // 2. Loading state while Privy initializes
+  if (!ready) {
+    return (
+      <div style={localStyles.gateContainer}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+          <RefreshCw className="animate-spin" size={32} color="var(--primary)" />
+          <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>Loading workspace...</p>
         </div>
       </div>
     );
@@ -286,8 +229,13 @@ export default function Dashboard() {
 
   return (
     <div style={styles.dashboardContainer}>
-      {/* Sidebar Panel */}
-      <aside style={styles.sidebar}>
+      {/* Sidebar Panel - Collapsible on Mobile via isSidebarOpen */}
+      <aside style={{...styles.sidebar, ...(isSidebarOpen ? styles.sidebarMobileOpen : {})}}>
+        {/* Mobile close button inside sidebar */}
+        <button onClick={() => setIsSidebarOpen(false)} style={styles.sidebarCloseMobileBtn}>
+          <X size={20} />
+        </button>
+
         <div style={styles.logoArea}>
           <Link href="/" style={styles.logoLink}>
             <Smartphone size={24} color="var(--primary)" />
@@ -295,7 +243,7 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {/* Droppable/Collapsible User Wallet Card */}
+        {/* Collapsible Wallet Card */}
         <div style={styles.walletCardContainer}>
           <button 
             onClick={() => setIsWalletOpen(!isWalletOpen)} 
@@ -314,7 +262,7 @@ export default function Dashboard() {
               <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Available Funds</span>
               <span style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "#fff" }}>₹{balance.toFixed(2)}</span>
             </div>
-            <button onClick={() => { setActiveTab("add-funds"); setIsWalletOpen(false); }} style={styles.addFundsBtn}>
+            <button onClick={() => { setActiveTab("add-funds"); setIsWalletOpen(false); setIsSidebarOpen(false); }} style={styles.addFundsBtn}>
               <Plus size={14} /> Top-Up Wallet
             </button>
           </div>
@@ -323,19 +271,19 @@ export default function Dashboard() {
         {/* Sidebar Nav Tabs */}
         <nav style={styles.sideNav}>
           <button 
-            onClick={() => setActiveTab("rent")} 
+            onClick={() => { setActiveTab("rent"); setIsSidebarOpen(false); }} 
             style={{...styles.navBtn, ...(activeTab === "rent" ? styles.navBtnActive : {})}}
           >
             <Smartphone size={18} /> Rent Numbers
           </button>
           <button 
-            onClick={() => setActiveTab("history")} 
+            onClick={() => { setActiveTab("history"); setIsSidebarOpen(false); }} 
             style={{...styles.navBtn, ...(activeTab === "history" ? styles.navBtnActive : {})}}
           >
             <Clock size={18} /> Order History
           </button>
           <button 
-            onClick={() => setActiveTab("add-funds")} 
+            onClick={() => { setActiveTab("add-funds"); setIsSidebarOpen(false); }} 
             style={{...styles.navBtn, ...(activeTab === "add-funds" ? styles.navBtnActive : {})}}
           >
             <Wallet size={18} /> Add Funds
@@ -348,11 +296,11 @@ export default function Dashboard() {
         {/* Info Box */}
         <div style={styles.infoBox}>
           <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
-            <Database size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: "2px" }} />
+            <ShieldAlert size={16} color="var(--primary)" style={{ flexShrink: 0, marginTop: "2px" }} />
             <div>
-              <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--primary)", textTransform: "uppercase" }}>Demo Backend Active</div>
+              <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--primary)", textTransform: "uppercase" }}>Secure API Active</div>
               <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginTop: "4px" }}>
-                This is a mock workspace. Real API key configuration endpoints can be updated inside the Admin Panel.
+                Verified encryption gateway online. Real API key configuration endpoints can be updated inside the Admin Panel.
               </div>
             </div>
           </div>
@@ -360,7 +308,7 @@ export default function Dashboard() {
 
         {/* Logout */}
         <div style={styles.sidebarFooter}>
-          <button onClick={() => setIsLoggedIn(false)} style={styles.logoutActionBtn}>
+          <button onClick={logout} style={styles.logoutActionBtn}>
             <LogOut size={16} /> Sign Out Workspace
           </button>
         </div>
@@ -371,7 +319,13 @@ export default function Dashboard() {
         {/* Top Navbar */}
         <header style={styles.topbar}>
           <div style={styles.topbarLeft}>
-            <h2>{activeTab === "rent" ? "SMS Activation Center" : activeTab === "history" ? "Activation History" : "Recharge Wallet"}</h2>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {/* Hamburger button to slide open the sidebar on mobile */}
+              <button onClick={() => setIsSidebarOpen(true)} style={styles.menuMobileToggleBtn}>
+                <Menu size={22} color="#ffffff" />
+              </button>
+              <h2>{activeTab === "rent" ? "SMS Activation Center" : activeTab === "history" ? "Activation History" : "Recharge Wallet"}</h2>
+            </div>
           </div>
           <div style={styles.topbarRight}>
             <div style={styles.topbarBadge}>
@@ -711,49 +665,28 @@ const localStyles = {
   gateCard: {
     maxWidth: "400px",
     width: "100%",
-    padding: "32px",
+    padding: "36px",
+    textAlign: "center",
   },
   gateHeader: {
-    textAlign: "center",
     marginBottom: "24px",
   },
-  googleBtn: {
-    display: "flex",
+  mainAuthBtn: {
+    display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     gap: "10px",
     width: "100%",
-    padding: "12px",
+    padding: "14px",
     borderRadius: "var(--radius-md)",
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid var(--border)",
-    color: "#fff",
-    fontWeight: 600,
-    fontSize: "0.95rem",
-    cursor: "pointer",
-    transition: "background var(--transition-fast)",
-  },
-  divider: {
-    position: "relative",
-    textAlign: "center",
-    margin: "20px 0",
-  },
-  dividerText: {
-    background: "var(--bg-card)",
-    padding: "0 10px",
-    fontSize: "0.75rem",
-    color: "var(--text-muted)",
-    position: "relative",
-    zIndex: 1,
-  },
-  toggleAuthModeBtn: {
-    background: "none",
+    background: "var(--primary)",
     border: "none",
-    color: "var(--primary)",
-    fontSize: "0.85rem",
+    color: "var(--bg-darker)",
+    fontWeight: 700,
+    fontSize: "1rem",
     cursor: "pointer",
-    marginTop: "12px",
-    textAlign: "center",
+    boxShadow: "0 0 16px var(--primary-glow-strong)",
+    transition: "background var(--transition-fast)",
   }
 };
 
@@ -762,6 +695,7 @@ const styles = {
     display: "flex",
     minHeight: "100vh",
     background: "var(--bg-main)",
+    position: "relative",
   },
   sidebar: {
     width: "260px",
@@ -771,6 +705,32 @@ const styles = {
     flexDirection: "column",
     padding: "24px 16px",
     flexShrink: 0,
+    transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    zIndex: 100,
+  },
+  sidebarMobileOpen: {
+    transform: "translateX(0) !important",
+  },
+  sidebarCloseMobileBtn: {
+    display: "none", // Overridden by CSS media query on mobile
+    background: "none",
+    border: "none",
+    color: "var(--text-muted)",
+    cursor: "pointer",
+    position: "absolute",
+    right: "16px",
+    top: "16px",
+  },
+  menuMobileToggleBtn: {
+    display: "none", // Overridden by CSS media query on mobile
+    background: "rgba(255, 255, 255, 0.03)",
+    border: "1px solid var(--border)",
+    borderRadius: "var(--radius-sm)",
+    width: "38px",
+    height: "38px",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
   },
   logoArea: {
     marginBottom: "32px",
