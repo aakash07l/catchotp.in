@@ -271,40 +271,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={styles.dashboardContainer}>
-      {/* Sidebar Panel - Visible on Desktop, Hidden on Mobile via CSS */}
-      <aside className="sidebar" style={styles.sidebar}>
-        <div style={styles.logoArea}>
-          <Link href="/" style={styles.logoLink}>
-            <Smartphone size={24} color="var(--primary)" />
-            <span style={styles.logoText}>Catch<span style={{ color: "var(--primary)" }}>Otp</span>.in</span>
-          </Link>
-        </div>
-
-        {/* Collapsible Wallet Card */}
-        <div style={styles.walletCardContainer}>
-          <button 
-            onClick={() => setIsWalletOpen(!isWalletOpen)} 
-            style={styles.walletDropdownHeader}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Wallet size={16} color="var(--primary)" />
-              <span style={{ fontWeight: 600, fontSize: "0.85rem" }}>Wallet Status</span>
-            </div>
-            {isWalletOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
-
-          {/* Expanded Drawer Content */}
-          <div style={{...styles.walletDrawer, height: isWalletOpen ? "auto" : "0", padding: isWalletOpen ? "14px" : "0", opacity: isWalletOpen ? 1 : 0}}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "12px" }}>
-              <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Available Funds</span>
-              <span style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "#fff" }}>₹{balance.toFixed(2)}</span>
-            </div>
-            <button onClick={() => { setActiveTab("add-funds"); setIsWalletOpen(false); }} style={styles.addFundsBtn}>
-              <Plus size={14} /> Top-Up Wallet
-            </button>
-          </div>
-        </div>
+  
+      
 
         {/* Info Box */}
         <div style={styles.infoBox}>
