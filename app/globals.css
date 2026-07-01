@@ -380,58 +380,14 @@ a {
      DASHBOARD RESPONSIVE MOBILE DRAWER RULES
      ========================================== */
   
-  /* Slide out drawer panel on mobile */
+  /* Hide sidebar panel completely on mobile */
   aside[style*="sidebar"] {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    bottom: 0 !important;
-    height: 100vh !important;
-    width: 280px !important;
-    transform: translateX(-100%) !important; /* Start hidden outside viewport */
-    box-shadow: 10px 0 30px rgba(0,0,0,0.7) !important;
-  }
-  
-  /* Show mobile close icon button inside mobile drawer */
-  button[style*="sidebarCloseMobileBtn"] {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+    display: none !important;
   }
   
   /* Show menu hamburger button inside top bar */
   button[style*="menuMobileToggleBtn"] {
     display: flex !important;
-  }
-  
-  /* Reset wallet card to block display inside the drawer on mobile */
-  div[style*="walletCardContainer"] {
-    margin-bottom: 20px !important;
-  }
-  
-  div[style*="walletDropdownHeader"] {
-    padding: 14px 16px !important;
-  }
-  
-  div[style*="walletDrawer"] {
-    padding: 14px !important;
-  }
-  
-  div[style*="walletCard"] {
-    max-width: unset !important;
-  }
-  
-  /* Re-align sidebar nav vertically inside drawer */
-  nav[style*="sideNav"] {
-    flex-direction: column !important;
-    overflow-x: visible !important;
-    white-space: normal !important;
-    width: 100% !important;
-  }
-  
-  nav[style*="sideNav"] button, nav[style*="sideNav"] a {
-    width: 100% !important;
-    text-align: left !important;
   }
   
   /* Main Content Layout Adjustments */
