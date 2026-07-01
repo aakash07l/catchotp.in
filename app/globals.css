@@ -305,6 +305,35 @@ a {
   -webkit-text-fill-color: transparent;
 }
 
+/* Dashboard Panel & Sidebar Styles */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg-main);
+  position: relative;
+}
+
+.sidebar-panel {
+  width: 260px;
+  background: var(--bg-darker);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+}
+
+.main-workspace {
+  flex-grow: 1;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+}
+
 /* ==========================================
    MOBILE & RESPONSIVE GLOBAL RULES
    ========================================== */
@@ -381,7 +410,7 @@ a {
      ========================================== */
   
   /* Hide sidebar panel completely on mobile */
-  .sidebar {
+  .sidebar-panel {
     display: none !important;
   }
   
@@ -391,7 +420,7 @@ a {
   }
   
   /* Main Content Layout Adjustments */
-  main[style*="mainContent"] {
+  .main-workspace {
     padding: 16px !important;
     gap: 16px !important;
   }
