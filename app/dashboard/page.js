@@ -271,8 +271,65 @@ export default function Dashboard() {
   }
 
   return (
-  
-      
+    <div className="dashboard-layout">
+      {/* Sidebar Panel - Visible on Desktop, Hidden on Mobile via CSS */}
+      <aside className="sidebar-panel">
+        <div style={styles.logoArea}>
+          <Link href="/dashboard" style={styles.logoLink}>
+            <Smartphone size={24} color="var(--primary)" />
+            <span style={styles.logoText}>Catch<span style={{ color: "var(--primary)" }}>Otp</span>.in</span>
+          </Link>
+        </div>
+
+        {/* Collapsible Wallet Card */}
+        <div style={styles.walletCardContainer}>
+          <button 
+            onClick={() => setIsWalletOpen(!isWalletOpen)} 
+            style={styles.walletDropdownHeader}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Wallet size={16} color="var(--primary)" />
+              <span style={{ fontWeight: 600, fontSize: "0.85rem" }}>Wallet Status</span>
+            </div>
+            {isWalletOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </button>
+
+          {/* Expanded Drawer Content */}
+          <div style={{...styles.walletDrawer, height: isWalletOpen ? "auto" : "0", padding: isWalletOpen ? "14px" : "0", opacity: isWalletOpen ? 1 : 0}}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "12px" }}>
+              <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Available Funds</span>
+              <span style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "#fff" }}>₹{balance.toFixed(2)}</span>
+            </div>
+            <button onClick={() => { setActiveTab("add-funds"); setIsWalletOpen(false); }} style={styles.addFundsBtn}>
+              <Plus size={14} /> Top-Up Wallet
+            </button>
+          </div>
+        </div>
+
+        {/* Sidebar Nav Tabs */}
+        <nav style={styles.sideNav}>
+          <button 
+            onClick={() => setActiveTab("rent")} 
+            style={{...styles.navBtn, ...(activeTab === "rent" ? styles.navBtnActive : {})}}
+          >
+            <Smartphone size={18} /> Rent Numbers
+          </button>
+          <button 
+            onClick={() => setActiveTab("history")} 
+            style={{...styles.navBtn, ...(activeTab === "history" ? styles.navBtnActive : {})}}
+          >
+            <Clock size={18} /> Order History
+          </button>
+          <button 
+            onClick={() => setActiveTab("add-funds")} 
+            style={{...styles.navBtn, ...(activeTab === "add-funds" ? styles.navBtnActive : {})}}
+          >
+            <Wallet size={18} /> Add Funds
+          </button>
+          <Link href="/admin" style={styles.navBtn}>
+            <Database size={18} /> Admin Panel
+          </Link>
+        </nav>
 
         {/* Info Box */}
         <div style={styles.infoBox}>
@@ -302,7 +359,7 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Workspace Area */}
-      <main style={styles.mainContent}>
+      <main className="main-workspace">
         {/* Top Navbar */}
         <header style={styles.topbar}>
           <div style={styles.topbarLeft}>
@@ -740,36 +797,6 @@ const localStyles = {
 };
 
 const styles = {
-  dashboardContainer: {
-    display: "flex",
-    minHeight: "100vh",
-    background: "var(--bg-main)",
-    position: "relative",
-  },
-  sidebar: {
-    width: "260px",
-    background: "var(--bg-darker)",
-    borderRight: "1px solid var(--border)",
-    display: "flex",
-    flexDirection: "column",
-    padding: "24px 16px",
-    flexShrink: 0,
-    transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    zIndex: 100,
-  },
-  sidebarMobileOpen: {
-    transform: "translateX(0) !important",
-  },
-  sidebarCloseMobileBtn: {
-    display: "none", // Overridden by CSS media query on mobile
-    background: "none",
-    border: "none",
-    color: "var(--text-muted)",
-    cursor: "pointer",
-    position: "absolute",
-    right: "16px",
-    top: "16px",
-  },
   menuMobileToggleBtn: {
     display: "none", // Overridden by CSS media query on mobile
     background: "rgba(255, 255, 255, 0.03)",
@@ -897,14 +924,6 @@ const styles = {
     width: "100%",
     padding: "0",
     textAlign: "left",
-  },
-  mainContent: {
-    flexGrow: 1,
-    padding: "32px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "24px",
-    overflowY: "auto",
   },
   topbar: {
     display: "flex",
