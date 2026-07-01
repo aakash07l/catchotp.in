@@ -16,8 +16,8 @@ export default function Dashboard() {
   const [isLoggedInMock, setIsLoggedInMock] = useState(false);
   const [showPrivyFallback, setShowPrivyFallback] = useState(false);
   
-  // Sidebar State (Default closed on mobile, open on desktop via CSS override)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Header Dropdown Menu State for Mobile
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   // Selection states
   const [selectedCountry, setSelectedCountry] = useState("India");
@@ -272,13 +272,8 @@ export default function Dashboard() {
 
   return (
     <div style={styles.dashboardContainer}>
-      {/* Sidebar Panel - Collapsible on Mobile via isSidebarOpen */}
-      <aside style={{...styles.sidebar, ...(isSidebarOpen ? styles.sidebarMobileOpen : {})}}>
-        {/* Mobile close button inside sidebar */}
-        <button onClick={() => setIsSidebarOpen(false)} style={styles.sidebarCloseMobileBtn}>
-          <X size={20} />
-        </button>
-
+      {/* Sidebar Panel - Visible on Desktop, Hidden on Mobile via CSS */}
+      <aside style={styles.sidebar}>
         <div style={styles.logoArea}>
           <Link href="/" style={styles.logoLink}>
             <Smartphone size={24} color="var(--primary)" />
@@ -305,7 +300,7 @@ export default function Dashboard() {
               <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Available Funds</span>
               <span style={{ fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-display)", color: "#fff" }}>₹{balance.toFixed(2)}</span>
             </div>
-            <button onClick={() => { setActiveTab("add-funds"); setIsWalletOpen(false); setIsSidebarOpen(false); }} style={styles.addFundsBtn}>
+            <button onClick={() => { setActiveTab("add-funds"); setIsWalletOpen(false); }} style={styles.addFundsBtn}>
               <Plus size={14} /> Top-Up Wallet
             </button>
           </div>
@@ -314,19 +309,19 @@ export default function Dashboard() {
         {/* Sidebar Nav Tabs */}
         <nav style={styles.sideNav}>
           <button 
-            onClick={() => { setActiveTab("rent"); setIsSidebarOpen(false); }} 
+            onClick={() => setActiveTab("rent")} 
             style={{...styles.navBtn, ...(activeTab === "rent" ? styles.navBtnActive : {})}}
           >
             <Smartphone size={18} /> Rent Numbers
           </button>
           <button 
-            onClick={() => { setActiveTab("history"); setIsSidebarOpen(false); }} 
+            onClick={() => setActiveTab("history")} 
             style={{...styles.navBtn, ...(activeTab === "history" ? styles.navBtnActive : {})}}
           >
             <Clock size={18} /> Order History
           </button>
           <button 
-            onClick={() => { setActiveTab("add-funds"); setIsSidebarOpen(false); }} 
+            onClick={() => setActiveTab("add-funds")} 
             style={{...styles.navBtn, ...(activeTab === "add-funds" ? styles.navBtnActive : {})}}
           >
             <Wallet size={18} /> Add Funds
@@ -369,9 +364,9 @@ export default function Dashboard() {
         <header style={styles.topbar}>
           <div style={styles.topbarLeft}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              {/* Hamburger button to slide open the sidebar on mobile */}
-              <button onClick={() => setIsSidebarOpen(true)} style={styles.menuMobileToggleBtn}>
-                <Menu size={22} color="#ffffff" />
+              {/* Hamburger button to toggle the dropdown menu on mobile */}
+              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} style={styles.menuMobileToggleBtn}>
+                {isDropdownOpen ? <X size={22} color="#ffffff" /> : <Menu size={22} color="#ffffff" />}
               </button>
               <h2>{activeTab === "rent" ? "SMS Activation Center" : activeTab === "history" ? "Activation History" : "Recharge Wallet"}</h2>
             </div>
@@ -383,6 +378,68 @@ export default function Dashboard() {
             </div>
           </div>
         </header>
+
+        {/* Mobile Absolute Dropdown Overlay Menu */}
+        {isDropdownOpen && (
+          <div style={styles.mobileDropdownMenu} className="card animate-fade-in">
+            {/* Wallet Section Inside Dropdown */}
+            <div style={styles.dropdownWalletSection}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Available Wallet</span>
+                <span style={{ fontSize: "1.15rem", fontWeight: 850, fontFamily: "var(--font-display)", color: "var(--primary)" }}>₹{balance.toFixed(2)}</span>
+              </div>
+              <button 
+                onClick={() => { setActiveTab("add-funds"); setIsDropdownOpen(false); }}
+                style={{...styles.addFundsBtn, marginTop: "12px", padding: "6px 0", fontSize: "0.8rem"}}
+              >
+                <Plus size={12} /> Top-Up Wallet
+              </button>
+            </div>
+
+            <div style={styles.dropdownDivider} />
+
+            {/* Menu Items */}
+            <button 
+              onClick={() => { setActiveTab("rent"); setIsDropdownOpen(false); }} 
+              style={{...styles.dropdownItem, ...(activeTab === "rent" ? styles.dropdownItemActive : {})}}
+            >
+              <Smartphone size={16} /> Rent Virtual Numbers
+            </button>
+            <button 
+              onClick={() => { setActiveTab("history"); setIsDropdownOpen(false); }} 
+              style={{...styles.dropdownItem, ...(activeTab === "history" ? styles.dropdownItemActive : {})}}
+            >
+              <Clock size={16} /> Order History Logs
+            </button>
+            <button 
+              onClick={() => { setActiveTab("add-funds"); setIsDropdownOpen(false); }} 
+              style={{...styles.dropdownItem, ...(activeTab === "add-funds" ? styles.dropdownItemActive : {})}}
+            >
+              <Wallet size={16} /> Add Funds (Recharge)
+            </button>
+            <Link 
+              href="/admin" 
+              onClick={() => setIsDropdownOpen(false)}
+              style={styles.dropdownItem}
+            >
+              <Database size={16} /> Admin Config Panel
+            </Link>
+
+            <div style={styles.dropdownDivider} />
+
+            {/* Sign Out Button */}
+            <button 
+              onClick={() => {
+                setIsDropdownOpen(false);
+                if (authenticated) logout();
+                else setIsLoggedInMock(false);
+              }} 
+              style={{...styles.dropdownItem, color: "var(--error)"}}
+            >
+              <LogOut size={16} /> Sign Out Workspace
+            </button>
+          </div>
+        )}
 
         {/* RENT TAB VIEW */}
         {activeTab === "rent" && (
@@ -1255,5 +1312,55 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     boxShadow: "0 0 20px var(--primary-glow-strong)",
+  },
+  mobileDropdownMenu: {
+    position: "absolute",
+    top: "76px",
+    left: "16px",
+    right: "16px",
+    zIndex: 999,
+    padding: "16px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "6px",
+    background: "var(--bg-input)",
+    border: "1px solid var(--border)",
+    boxShadow: "var(--shadow-lg)",
+  },
+  dropdownWalletSection: {
+    background: "rgba(255, 255, 255, 0.02)",
+    border: "1px solid var(--border)",
+    padding: "12px",
+    borderRadius: "var(--radius-md)",
+    marginBottom: "8px",
+    display: "flex",
+    flexDirection: "column",
+  },
+  dropdownDivider: {
+    height: "1px",
+    background: "var(--border)",
+    margin: "8px 0",
+  },
+  dropdownItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    width: "100%",
+    padding: "12px 14px",
+    background: "none",
+    border: "none",
+    borderRadius: "var(--radius-sm)",
+    color: "var(--text-muted)",
+    fontSize: "0.9rem",
+    fontWeight: 600,
+    cursor: "pointer",
+    textAlign: "left",
+    transition: "all var(--transition-fast)",
+  },
+  dropdownItemActive: {
+    background: "rgba(16, 185, 129, 0.05)",
+    color: "var(--primary)",
+    borderLeft: "3px solid var(--primary)",
+    paddingLeft: "11px",
   },
 };
