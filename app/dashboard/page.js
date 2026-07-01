@@ -273,7 +273,7 @@ export default function Dashboard() {
   return (
     <div style={styles.dashboardContainer}>
       {/* Sidebar Panel - Visible on Desktop, Hidden on Mobile via CSS */}
-      <aside style={styles.sidebar}>
+      <aside className="sidebar" style={styles.sidebar}>
         <div style={styles.logoArea}>
           <Link href="/" style={styles.logoLink}>
             <Smartphone size={24} color="var(--primary)" />
