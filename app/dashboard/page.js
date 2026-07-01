@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePrivy } from "@privy-io/react-auth";
+import { useAuth } from "../providers";
 import { 
   Smartphone, Search, Wallet, Plus, Clock, Copy, Check, Trash2, 
   RefreshCw, LogOut, ShieldAlert, Award, ChevronDown, ChevronUp, CheckCircle, Database, Lock, LogIn, Menu, X
 } from "lucide-react";
 
 export default function Dashboard() {
-  // Privy Hooks
-  const { login, logout, authenticated, ready, user } = usePrivy();
+  // Privy Hooks via safe useAuth wrapper
+  const { login, logout, authenticated, ready, user } = useAuth();
   
   // Custom mock login state as a fallback
   const [isLoggedInMock, setIsLoggedInMock] = useState(false);
