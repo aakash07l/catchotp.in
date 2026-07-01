@@ -12,6 +12,10 @@ export default function Dashboard() {
   // Privy Hooks
   const { login, logout, authenticated, ready, user } = usePrivy();
   
+  // Custom mock login state as a fallback
+  const [isLoggedInMock, setIsLoggedInMock] = useState(false);
+  const [showPrivyFallback, setShowPrivyFallback] = useState(false);
+  
   // Sidebar State (Default closed on mobile, open on desktop via CSS override)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
@@ -65,6 +69,16 @@ export default function Dashboard() {
   const filteredServices = services.filter(s => 
     s.name.toLowerCase().includes(searchService.toLowerCase())
   );
+
+  // Monitor loading timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!ready) {
+        setShowPrivyFallback(true);
+      }
+    }, 4000); // 4 seconds timeout for Privy config loading
+    return () => clearTimeout(timer);
+  }, [ready]);
 
   // Copy helper
   const handleCopy = (text, type) => {
@@ -190,8 +204,11 @@ export default function Dashboard() {
     }, 2000);
   };
 
+  // Combined auth check: Privy logged in OR guest bypass clicked
+  const isUserLoggedIn = authenticated || isLoggedInMock;
+
   // 1. Auth Gate View using Privy
-  if (ready && !authenticated) {
+  if (ready && !isUserLoggedIn) {
     return (
       <div style={localStyles.gateContainer}>
         <div className="card animate-fade-in" style={localStyles.gateCard}>
@@ -210,18 +227,44 @@ export default function Dashboard() {
           <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", textAlign: "center", marginTop: "16px", lineHeight: "1.5" }}>
             By signing in, you agree to our terms of service. Security and encryption are managed by Privy.
           </p>
+          
+          {/* Guest Mode Fallback */}
+          <div style={{ marginTop: "24px", paddingTop: "16px", borderTop: "1px solid var(--border)", textAlign: "center" }}>
+            <button 
+              onClick={() => setIsLoggedInMock(true)} 
+              className="btn btn-secondary btn-sm"
+              style={{ width: "100%" }}
+            >
+              Continue in Guest Mode (Skip Auth)
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
-  // 2. Loading state while Privy initializes
-  if (!ready) {
+  // 2. Loading state while Privy initializes (with Timeout Bypass)
+  if (!ready && !isUserLoggedIn) {
     return (
       <div style={localStyles.gateContainer}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", maxWidth: "360px", textAlign: "center" }}>
           <RefreshCw className="animate-spin" size={32} color="var(--primary)" />
-          <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>Loading workspace...</p>
+          <p style={{ fontSize: "0.9rem", color: "var(--text-main)" }}>Connecting to security gateway...</p>
+          
+          {showPrivyFallback && (
+            <div className="card animate-fade-in" style={{ marginTop: "24px", padding: "16px", border: "1px dashed var(--border)" }}>
+              <p style={{ fontSize: "0.8rem", color: "var(--accent)", marginBottom: "12px" }}>
+                Notice: Setting up authentication key. You can skip setup to preview the dashboard.
+              </p>
+              <button 
+                onClick={() => setIsLoggedInMock(true)} 
+                className="btn btn-primary btn-sm"
+                style={{ width: "100%", padding: "10px" }}
+              >
+                Access Dashboard (Bypass Login)
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -308,7 +351,13 @@ export default function Dashboard() {
 
         {/* Logout */}
         <div style={styles.sidebarFooter}>
-          <button onClick={logout} style={styles.logoutActionBtn}>
+          <button 
+            onClick={() => {
+              if (authenticated) logout();
+              else setIsLoggedInMock(false);
+            }} 
+            style={styles.logoutActionBtn}
+          >
             <LogOut size={16} /> Sign Out Workspace
           </button>
         </div>
