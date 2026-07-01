@@ -306,31 +306,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Sidebar Nav Tabs */}
-        <nav style={styles.sideNav}>
-          <button 
-            onClick={() => setActiveTab("rent")} 
-            style={{...styles.navBtn, ...(activeTab === "rent" ? styles.navBtnActive : {})}}
-          >
-            <Smartphone size={18} /> Rent Numbers
-          </button>
-          <button 
-            onClick={() => setActiveTab("history")} 
-            style={{...styles.navBtn, ...(activeTab === "history" ? styles.navBtnActive : {})}}
-          >
-            <Clock size={18} /> Order History
-          </button>
-          <button 
-            onClick={() => setActiveTab("add-funds")} 
-            style={{...styles.navBtn, ...(activeTab === "add-funds" ? styles.navBtnActive : {})}}
-          >
-            <Wallet size={18} /> Add Funds
-          </button>
-          <Link href="/admin" style={styles.navBtn}>
-            <Database size={18} /> Admin Panel
-          </Link>
-        </nav>
-
         {/* Info Box */}
         <div style={styles.infoBox}>
           <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
