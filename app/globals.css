@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
@@ -112,7 +111,7 @@ a {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 /* Button Component Styles */
@@ -304,4 +303,170 @@ a {
   background: linear-gradient(135deg, var(--primary) 0%, #a7f3d0 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================
+   MOBILE & RESPONSIVE GLOBAL RULES
+   ========================================== */
+@media (max-width: 991px) {
+  h1 { font-size: 2.4rem !important; }
+  h2 { font-size: 1.8rem !important; }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  .card {
+    padding: 16px;
+  }
+  
+  /* Landing Page Specific Mobile Adjustments */
+  nav {
+    display: none !important; /* Hide header desktop menu on mobile */
+  }
+  header > .container {
+    justify-content: space-between !important;
+  }
+  header h1 {
+    font-size: 2.2rem !important;
+  }
+  
+  /* Hero section padding */
+  section {
+    padding: 48px 0 !important;
+  }
+  
+  /* Stats bar layout */
+  div[style*="statsBar"] {
+    flex-direction: column !important;
+    padding: 16px !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+  div[style*="statDivider"] {
+    width: 100% !important;
+    height: 1px !important;
+  }
+  
+  /* Hero buttons */
+  div[style*="heroCta"] {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+  div[style*="heroCta"] a {
+    width: 100% !important;
+    text-align: center;
+  }
+  
+  /* Grids */
+  div[style*="featuresGrid"], div[style*="servicesGrid"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  /* Footer layout */
+  footer > .container {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 16px !important;
+  }
+  div[style*="footerLinks"] {
+    justify-content: center !important;
+  }
+
+  /* ==========================================
+     DASHBOARD RESPONSIVE MOBILE DRAWER RULES
+     ========================================== */
+  
+  /* Slide out drawer panel on mobile */
+  aside[style*="sidebar"] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    width: 280px !important;
+    transform: translateX(-100%) !important; /* Start hidden outside viewport */
+    box-shadow: 10px 0 30px rgba(0,0,0,0.7) !important;
+  }
+  
+  /* Show mobile close icon button inside mobile drawer */
+  button[style*="sidebarCloseMobileBtn"] {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Show menu hamburger button inside top bar */
+  button[style*="menuMobileToggleBtn"] {
+    display: flex !important;
+  }
+  
+  /* Reset wallet card to block display inside the drawer on mobile */
+  div[style*="walletCardContainer"] {
+    margin-bottom: 20px !important;
+  }
+  
+  div[style*="walletDropdownHeader"] {
+    padding: 14px 16px !important;
+  }
+  
+  div[style*="walletDrawer"] {
+    padding: 14px !important;
+  }
+  
+  div[style*="walletCard"] {
+    max-width: unset !important;
+  }
+  
+  /* Re-align sidebar nav vertically inside drawer */
+  nav[style*="sideNav"] {
+    flex-direction: column !important;
+    overflow-x: visible !important;
+    white-space: normal !important;
+    width: 100% !important;
+  }
+  
+  nav[style*="sideNav"] button, nav[style*="sideNav"] a {
+    width: 100% !important;
+    text-align: left !important;
+  }
+  
+  /* Main Content Layout Adjustments */
+  main[style*="mainContent"] {
+    padding: 16px !important;
+    gap: 16px !important;
+  }
+  
+  header[style*="topbar"] {
+    padding-bottom: 12px !important;
+  }
+  
+  /* Grid splits sidebar layout */
+  div[style*="tabGrid"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  div[style*="countryGrid"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  /* Active list view height adjustment */
+  div[style*="activePanel"] {
+    height: auto !important;
+    min-height: unset !important;
+  }
+  
+  /* Adjust app selection box height */
+  div[style*="height: calc(100vh - 430px)"] {
+    height: 380px !important;
+  }
+
+  /* Preset recharge grids */
+  div[style*="presetGrid"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
