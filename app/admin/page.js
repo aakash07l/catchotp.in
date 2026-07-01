@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { 
   Smartphone, Settings, Users, Database, ShieldAlert, Award, 
-  TrendingUp, Save, Key, DollarSign, PlusCircle, ArrowLeft, RefreshCw, Send, Check 
+  TrendingUp, Save, Key, DollarSign, PlusCircle, ArrowLeft, RefreshCw, Send, Check, Eye, Lock 
 } from "lucide-react";
 
 export default function AdminPanel() {
+  // Admin Login States
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
   // Configuration settings (saved in localStorage or mock state)
   const [provider, setProvider] = useState("sms-activate");
   const [apiKey, setApiKey] = useState("demo_key_catchotp_123456789");
@@ -36,6 +41,17 @@ export default function AdminPanel() {
   const [selectedUser, setSelectedUser] = useState("");
   const [adjustAmount, setAdjustAmount] = useState("");
   const [adjustAction, setAdjustAction] = useState("add"); // add or deduct
+
+  // Admin login handler
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    if (adminPassword === "admin123") {
+      setIsAdminLoggedIn(true);
+      setLoginError("");
+    } else {
+      setLoginError("Invalid Admin Password! Hint: admin123");
+    }
+  };
 
   // Settings Save Handler
   const handleSaveSettings = (e) => {
@@ -70,6 +86,47 @@ export default function AdminPanel() {
     alert("User balance updated successfully!");
   };
 
+  // Check login state
+  if (!isAdminLoggedIn) {
+    return (
+      <div style={localStyles.gateContainer}>
+        <div className="card animate-fade-in" style={localStyles.gateCard}>
+          <div style={localStyles.gateHeader}>
+            <div style={localStyles.iconWrapper}>
+              <Lock size={32} color="var(--error)" />
+            </div>
+            <h2>Admin Security Portal</h2>
+            <p>Authorized personnel only. Please enter the management password to access the panel.</p>
+          </div>
+
+          <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div className="form-group">
+              <label className="form-label">Password PIN</label>
+              <input 
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="input"
+                placeholder="••••••••"
+                style={{ width: "100%" }}
+                required
+              />
+              {loginError && <span style={localStyles.errorText}>{loginError}</span>}
+            </div>
+
+            <button type="submit" className="btn btn-danger" style={{ width: "100%", padding: "12px", background: "var(--error)", color: "#fff" }}>
+              Unlock System Panel
+            </button>
+            
+            <Link href="/dashboard" className="btn btn-secondary" style={{ width: "100%", padding: "12px" }}>
+              <ArrowLeft size={16} /> Back to Dashboard
+            </Link>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.adminContainer}>
       {/* Sidebar Panel */}
@@ -86,6 +143,7 @@ export default function AdminPanel() {
           <a href="#stats" style={styles.navBtnActive}><TrendingUp size={18} /> System Overview</a>
           <a href="#settings" style={styles.navBtn}><Settings size={18} /> API Config Settings</a>
           <a href="#users" style={styles.navBtn}><Users size={18} /> Users Manager</a>
+          <button onClick={() => setIsAdminLoggedIn(false)} style={styles.navBtn}><Lock size={18} /> Lock Console</button>
           <Link href="/dashboard" style={styles.navBtn}><ArrowLeft size={18} /> Exit Admin</Link>
         </nav>
 
@@ -313,6 +371,42 @@ export default function AdminPanel() {
   );
 }
 
+const localStyles = {
+  gateContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: "100vh",
+    background: "var(--bg-main)",
+    padding: "20px",
+  },
+  gateCard: {
+    maxWidth: "420px",
+    width: "100%",
+    padding: "32px",
+  },
+  gateHeader: {
+    textAlign: "center",
+    marginBottom: "24px",
+  },
+  iconWrapper: {
+    width: "64px",
+    height: "64px",
+    borderRadius: "50%",
+    background: "rgba(239, 68, 68, 0.1)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 16px auto",
+  },
+  errorText: {
+    color: "var(--error)",
+    fontSize: "0.75rem",
+    marginTop: "4px",
+    display: "block",
+  }
+};
+
 const styles = {
   adminContainer: {
     display: "flex",
@@ -377,6 +471,7 @@ const styles = {
     cursor: "pointer",
     textAlign: "left",
     transition: "all var(--transition-fast)",
+    width: "100%",
   },
   navBtnActive: {
     display: "flex",
@@ -390,6 +485,7 @@ const styles = {
     paddingLeft: "13px",
     fontSize: "0.95rem",
     fontWeight: 600,
+    textAlign: "left",
   },
   sidebarFooter: {
     borderTop: "1px solid var(--border)",
