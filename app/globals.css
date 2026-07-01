@@ -381,7 +381,7 @@ a {
      ========================================== */
   
   /* Hide sidebar panel completely on mobile */
-  aside[style*="sidebar"] {
+  .sidebar {
     display: none !important;
   }
   
